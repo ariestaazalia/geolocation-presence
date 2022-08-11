@@ -14136,9 +14136,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 document.getElementById('action').addEventListener('click', function() {
+    var name = document.getElementById('name').value;
+    var date = new Date();
+    var tomorrow = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+    expires = "; expires=" + tomorrow;
 	if(navigator.geolocation) {
 		map.locate({setView:true})
 			.on('locationfound', function(e){
+                document.cookie = 'name = ' + name + expires; 
+                document.cookie = 'location = ' + [e.latitude, e.longitude] + expires ;
 				L.circleMarker([e.latitude, e.longitude])
 					.addTo(map)
 					.bindPopup('Your are here :)')
