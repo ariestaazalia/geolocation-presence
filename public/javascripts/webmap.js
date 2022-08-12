@@ -14129,30 +14129,74 @@
 },{}],2:[function(require,module,exports){
 var L = require('leaflet');
 
-var map = L.map('map').setView([-6.174998310870508, 106.8270206451416], 5);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> '
-}).addTo(map);
-
-document.getElementById('action').addEventListener('click', function() {
-    var name = document.getElementById('name').value;
-    var date = new Date();
-    var tomorrow = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-    expires = "; expires=" + tomorrow;
-	if(navigator.geolocation) {
-		map.locate({setView:true})
-			.on('locationfound', function(e){
-                document.cookie = 'name = ' + name + expires; 
-                document.cookie = 'location = ' + [e.latitude, e.longitude] + expires ;
-				L.circleMarker([e.latitude, e.longitude])
-					.addTo(map)
-					.bindPopup('Your are here :)')
-					.openPopup();
-			})
-			.on('locationerror', function(e){
-				alert("Location access denied. Please allow changes made to access your location");
-			});
+if (document.cookie) {
+	function getCookie(value) {
+		split = document.cookie.match('(^|;)\\s*' + value + '\\s*=\\s*([^;]+)');
+		return split ? split.pop() : '';
 	}
-});
+	
+	var name = getCookie('name');
+	var latitude = getCookie('latitude');
+	var longitude = getCookie('longitude');
+	
+	document.getElementById('name').remove();
+	document.getElementById('action').remove();
+	var displayName = 
+				`
+					<h2 class="fw-bold">Hello, ` + name + `</h2>
+					<p>You have made attendance today, try again tomorrow</p>
+				`
+
+	document.getElementById('container-name').insertAdjacentHTML('beforeend', displayName);
+
+	var map = L.map('map').setView([latitude, longitude], 15);
+
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> '
+	}).addTo(map);
+
+	L.circleMarker([latitude, longitude])
+		.addTo(map)
+		.bindPopup('Your are here :)')
+		.openPopup();
+} else {
+	var map = L.map('map').setView([-6.174998310870508, 106.8270206451416], 5);
+
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> '
+	}).addTo(map);
+
+	document.getElementById('action').addEventListener('click', function() {
+		var name = document.getElementById('name').value;
+		var date = new Date();
+		var tomorrow = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+		expires = "; expires=" + tomorrow;
+		if(navigator.geolocation) {
+			map.locate({setView:true})
+				.on('locationfound', function(e){
+					document.cookie = 'name= ' + name + expires; 
+					document.cookie = 'latitude= ' + e.latitude + expires;
+					document.cookie = 'longitude= ' + e.longitude + expires;
+					L.circleMarker([e.latitude, e.longitude])
+						.addTo(map)
+						.bindPopup('Your are here :)')
+						.openPopup();
+
+					document.getElementById('name').remove();
+					document.getElementById('action').remove();
+					var displayName = 
+								`
+									<h2 class="fw-bold">Hello, ` + name + `</h2>
+									<p>You have made attendance today, try again tomorrow</p>
+								`
+
+					document.getElementById('container-name').insertAdjacentHTML('beforeend', displayName);
+				})
+				.on('locationerror', function(e){
+					alert("Location access denied. Please allow changes made to access your location");
+				});
+		}
+	});
+}
+
 },{"leaflet":1}]},{},[2]);
