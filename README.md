@@ -2,6 +2,10 @@
 
 This is a Geolocation Based Presence System built with Express
 
+# Preview
+
+![GeolocationPresence](public/images/image.png)
+
 # Tools
 
 - Node.js
