@@ -8,7 +8,7 @@
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
-    "express": "~4.18.1",
+    "express": "~4.20.0",
     "leaflet": "^1.9.2",
     "morgan": "~1.10.0"
   }
